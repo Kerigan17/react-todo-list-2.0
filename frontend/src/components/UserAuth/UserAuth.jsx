@@ -1,8 +1,16 @@
 import './UserAuth.scss';
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import axios from "axios";
 
 export default function UserAuth() {
-    let [mode, setMode] = useState('login')
+    let [mode, setMode] = useState('login');
+    let [users, setUsers] = useState([1,2,3]);
+
+    useEffect(() => {
+        axios.get("http://localhost:4000/users")
+            .then(data => setUsers(data.data))
+            .catch(error => console.error(error));
+    }, []);
 
     return(
         <>
@@ -25,6 +33,10 @@ export default function UserAuth() {
                         <button type='button' className={'form__btn'}>Signup</button>
                     }
                 </form>
+            </div>
+
+            <div>
+                all users {users}
             </div>
 
         </>
