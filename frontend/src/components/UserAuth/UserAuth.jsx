@@ -5,36 +5,48 @@ import axios from "axios";
 
 export default function UserAuth() {
     let [mode, setMode] = useState('login');
-    let [users, setUsers] = useState([]);
+    let [error, setError] = useState(false)
     const loginInput = React.createRef();
     const passwordInput = React.createRef();
-
-    // data for one user
-    // let [user, setUser] = useState({login:'', password:''})
-
-    // get data for all users
-    // useEffect(() => {
-    //         axios.get(`${baseURL}/users/all-users`)
-    //             .then(resp => {
-    //                 setUsers(resp.data);
-    //                 console.log(resp.data)
-    //             });
-    // }, []);
 
     function checkUser() {
         let login = loginInput.current.value;
         let password = passwordInput.current.value;
 
         axios.get(`${baseURL}/users/user`, {
-            headers: {
-                "content-type": "application/json"
-            },
             params: {
                 login: login,
                 password: password
             }
         })
-            .then(response => console.log(response.data))
+            .then(response => {
+                if (!response.data) {
+                    setError(true);
+                } else {
+                    setError(false);
+                    console.log('access is allowed')
+                }
+            })
+    }
+
+    function addUser() {
+        let login = loginInput.current.value;
+        let password = passwordInput.current.value;
+
+        axios.post(`${baseURL}/users/add-user`, {
+            login: login,
+            password: password
+        })
+            .then(response => console.log('new user was added'))
+    }
+
+    function resetError() {
+        if (error) setError(false);
+    }
+
+    function changeMod(mod) {
+        setMode(mod);
+        setError(false);
     }
 
     return(
@@ -43,19 +55,25 @@ export default function UserAuth() {
                 <h2 className={'form-title'}>Todo List</h2>
 
                 <div className={'switcher'}>
-                    <div className={mode==='login' ? 'switcher__login active' : 'switcher__login'} onClick={() => setMode('login')}>Login</div>
-                    <div className={mode==='signup' ? 'switcher__signup active' : 'switcher__signup'} onClick={() => setMode('signup')}>Signup</div>
+                    <div className={mode==='login' ? 'switcher__login active' : 'switcher__login'} onClick={() => changeMod('login')}>Login</div>
+                    <div className={mode==='signup' ? 'switcher__signup active' : 'switcher__signup'} onClick={() => changeMod('signup')}>Signup</div>
                 </div>
 
                 <form className={'form-auth'}>
-                    <input type="email" placeholder='email' ref={loginInput}/>
-                    <input type="password" placeholder='password' ref={passwordInput}/>
+                    <input type="email" placeholder='email' ref={loginInput} onChange={resetError}/>
+                    <input type="password" placeholder='password' ref={passwordInput} onChange={resetError}/>
+
                     <a className={'forgot'} href="#">Forgot password?</a>
+
+                    {error &&
+                        <div className={'form__error'}>Неверный логин или пароль</div>
+                    }
+
                     {mode==='login' &&
                         <button type='button' className={'form__btn'} onClick={checkUser}>Login</button>
                     }
                     {mode==='signup' &&
-                        <button type='button' className={'form__btn'}>Signup</button>
+                        <button type='button' className={'form__btn'} onClick={addUser}>Signup</button>
                     }
                 </form>
             </div>

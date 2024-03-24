@@ -16,7 +16,7 @@
     .form-block {
       display: flex;
       flex-direction: column;
-      width: 400px;
+      width: 350px;
       background-color: white;
       padding: 30px;
       border-radius: 20px;
@@ -79,6 +79,12 @@
           font-family: "Mali", cursive;
         }
 
+        .form__error {
+          color: red;
+          margin-top: 10px;
+          text-align: center;
+        }
+
         .form__btn {
           margin-top: 15px;
           padding: 15px;
@@ -93,6 +99,7 @@
 
         .forgot {
           text-decoration: none;
+          text-align: right;
         }
       }
     }
