@@ -29,7 +29,7 @@ export default function UserAuth() {
                     }
                 })
         } else {
-            setError({mode: true, text: 'enter password and login'});
+            setError({mode: true, text: 'enter login and password'});
         }
     }
 
@@ -45,7 +45,7 @@ export default function UserAuth() {
     }
 
     function resetError() {
-        if (error) setError(false);
+        if (error) setError({mode: false, text: ''});
     }
 
     function changeMod(mod) {
