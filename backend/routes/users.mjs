@@ -11,8 +11,6 @@ router.get("/user", async (req, res) => {
         password: req.query.password
     });
 
-    console.log(result)
-
     if (!result) res.send(false).status(404);
     else res.send(result).status(200);
 });

@@ -1,11 +1,11 @@
 import './UserAuth.scss';
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {baseURL} from "../../config.mjs";
 import axios from "axios";
 
 export default function UserAuth() {
     let [mode, setMode] = useState('login');
-    let [error, setError] = useState(false)
+    let [error, setError] = useState({mode: false, text: ''});
     const loginInput = React.createRef();
     const passwordInput = React.createRef();
 
@@ -13,20 +13,24 @@ export default function UserAuth() {
         let login = loginInput.current.value;
         let password = passwordInput.current.value;
 
-        axios.get(`${baseURL}/users/user`, {
-            params: {
-                login: login,
-                password: password
-            }
-        })
-            .then(response => {
-                if (!response.data) {
-                    setError(true);
-                } else {
-                    setError(false);
-                    console.log('access is allowed')
+        if (login && password) {
+            axios.get(`${baseURL}/users/user`, {
+                params: {
+                    login: login,
+                    password: password
                 }
             })
+                .then(response => {
+                    if (!response.data) {
+                        setError({mode: true, text: 'incorrect login or password'});
+                    } else {
+                        setError({mode: false, text: ''});
+                        console.log('access is allowed')
+                    }
+                })
+        } else {
+            setError({mode: true, text: 'enter password and login'});
+        }
     }
 
     function addUser() {
@@ -65,23 +69,11 @@ export default function UserAuth() {
 
                     <a className={'forgot'} href="#">Forgot password?</a>
 
-                    {error &&
-                        <div className={'form__error'}>Неверный логин или пароль</div>
-                    }
-
-                    {mode==='login' &&
-                        <button type='button' className={'form__btn'} onClick={checkUser}>Login</button>
-                    }
-                    {mode==='signup' &&
-                        <button type='button' className={'form__btn'} onClick={addUser}>Signup</button>
-                    }
+                    {error.mode && <div className={'form__error'}>{error.text}</div> }
+                    {mode==='login' && <button type='button' className={'form__btn btn_login'} onClick={checkUser}>Login</button> }
+                    {mode==='signup' &&  <button type='button' className={'form__btn btn_signup'} onClick={addUser}>Signup</button> }
                 </form>
             </div>
-
-            <div>
-
-            </div>
-
         </>
     )
 }
