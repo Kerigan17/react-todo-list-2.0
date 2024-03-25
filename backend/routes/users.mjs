@@ -6,13 +6,12 @@ const router = express.Router();
 // Get a single post
 router.get("/user", async (req, res) => {
     let collection = await db.collection("users");
-    let query = {
-        login: req.params.login,
-        password: req.params.password
-    };
-    let result = await collection.findOne(query);
+    let result = await collection.findOne({
+        login: req.query.login,
+        password: req.query.password
+    });
 
-    if (!result) res.send("Not found").status(404);
+    if (!result) res.send(false).status(404);
     else res.send(result).status(200);
 });
 
@@ -26,11 +25,17 @@ router.get("/all-users", async (req, res) => {
 
 
 // Add a new document to the collection
-router.post("/", async (req, res) => {
-    let collection = await db.collection("posts");
-    let newDocument = req.body;
-    newDocument.date = new Date();
-    let result = await collection.insertOne(newDocument);
+router.post("/add-user", async (req, res) => {
+    let collection = await db.collection("users");
+    let user = await collection.findOne({login: req.body.login});
+    if(user) {
+        res.status(403).send('Login already exist');
+        return;
+    }
+    let result = await collection.insertOne({
+        login: req.body.login,
+        password: req.body.password
+    });
     res.send(result).status(204);
 });
 
