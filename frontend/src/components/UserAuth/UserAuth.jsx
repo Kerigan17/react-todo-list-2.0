@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {baseURL} from "../../config.mjs";
 import axios from "axios";
 
-export default function UserAuth() {
+export default function UserAuth({onAuth}) {
     let [mode, setMode] = useState('login');
     let [error, setError] = useState('');
     const loginInput = React.createRef();
@@ -26,6 +26,7 @@ export default function UserAuth() {
                     } else {
                         setError('');
                         console.log('access is allowed')
+                        onAuth(true);
                     }
                 })
         } else {
@@ -41,6 +42,7 @@ export default function UserAuth() {
             login: login,
             password: password
         })
+            .then(() => checkUser())
             .catch(error => setError(error.response.data));
     }
 
