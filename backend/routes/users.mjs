@@ -23,7 +23,6 @@ router.get("/all-users", async (req, res) => {
     else res.send(result).status(200);
 });
 
-
 // Add a new document to the collection
 router.post("/add-user", async (req, res) => {
     let collection = await db.collection("users");
