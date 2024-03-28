@@ -10,20 +10,28 @@ export default function TaskList() {
     useEffect(() => {
         axios.get(`${baseURL}/tasks/all-tasks`)
             .then(res => {
-                setTasks(res.data);
+                if (tasks.length === 0) setTasks(res.data);
                 console.log(res.data)
             })
     }, []);
 
     let onDragEnd = result => {
-
+        const {destination, source, draggableId} = result;
+        if (!destination) return;
+        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+        let newTasks = [...tasks];
+        newTasks.splice(source.index, 1);
+        let movedTask = tasks.find((task) => task._id === draggableId);
+        newTasks.splice(destination.index, 0, movedTask);
+        setTasks(newTasks);
     }
 
     return (
         <DragDropContext onDragEnd={onDragEnd}>
             <h2>Tasks</h2>
             <div className="columns">
-                <Column name ={'column'} tasks = {tasks}></Column>
+                <Column name={'column'} tasks={tasks}/>
+
             </div>
         </DragDropContext>
     )
