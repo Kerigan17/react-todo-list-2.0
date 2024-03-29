@@ -1,12 +1,26 @@
 import {Droppable} from "react-beautiful-dnd";
 import Task from "../Task/Task";
 import './Column.scss';
+import {useEffect, useState} from "react";
+import axios from "axios";
+import {baseURL} from "../../../config.mjs";
 
-export default function Column({name, tasks, nameTasks}) {
+export default function Column({name, tasksIds}) {
+    const [tasks, setTasks] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${baseURL}/tasks/all-tasks`, {
+            params: {
+                tasksIds: tasksIds
+            }
+        })
+            .then(res => console.log(res.data))
+    }, []);
+
     return (
-        <div className={nameTasks}>
+        <div className={name}>
             <div className={'column-header'}>
-                <h2 className="column-title">{name}</h2>
+                <h2 className="column-title">{name.toUpperCase()}</h2>
                 <div className="add-task">Add New +</div>
             </div>
 
