@@ -8,13 +8,18 @@ import "./TaskList.scss";
 export default function TaskList({userId}) {
     const [columns, setColumns] = useState({})
     useEffect(() => {
+        loadData();
+    }, []);
+
+    function loadData(){
+        console.log('updated');
         axios.get(`${baseURL}/columns/user-columns`, {
             params: {
                 user_id: userId
             }
         })
             .then(res => setColumns(res.data))
-    }, []);
+    }
 
     let onDragEnd = result => {
         const {destination, source, draggableId} = result;
@@ -22,12 +27,12 @@ export default function TaskList({userId}) {
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
         axios.patch(`${baseURL}/columns/drop-task`, {
             user_id: userId,
-            taskId: draggableId,
-            sourceId: source.droppableId,
-            destinationId: destination.droppableId,
-            destinationIndex: destination.index
+            task_id: draggableId,
+            source_id: source.droppableId,
+            destination_id: destination.droppableId,
+            destination_index: destination.index
         })
-            .then(res => console.log(res.data))
+            .then(res => loadData())
     }
 
     return (
