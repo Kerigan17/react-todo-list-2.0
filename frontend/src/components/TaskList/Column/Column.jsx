@@ -14,7 +14,7 @@ export default function Column({name, tasksIds}) {
                 tasksIds: tasksIds
             }
         })
-            .then(res => console.log(res.data))
+            .then(res => setTasks(res.data))
     }, []);
 
     return (
@@ -33,7 +33,7 @@ export default function Column({name, tasksIds}) {
                     >
                         <div className="tasks">
                             {tasks.map((task, index) => (
-                                <Task key={task._id} task={task} index={index}/>
+                                <Task key={index} task={task} index={index}/>
                             ))}
                         </div>
                         {provided.placeholder}

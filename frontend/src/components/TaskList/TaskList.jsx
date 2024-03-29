@@ -20,6 +20,14 @@ export default function TaskList({userId}) {
         const {destination, source, draggableId} = result;
         if (!destination) return;
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
+        axios.patch(`${baseURL}/columns/drop-task`, {
+            user_id: userId,
+            taskId: draggableId,
+            sourceId: source.droppableId,
+            destinationId: destination.droppableId,
+            destinationIndex: destination.index
+        })
+            .then(res => console.log(res.data))
     }
 
     return (
