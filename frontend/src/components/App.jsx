@@ -4,6 +4,7 @@ import UserAuth from "./UserAuth/UserAuth";
 import TaskList from './TaskList/TaskList';
 
 export default function App() {
+    const [userId, setUserId] = useState('66002286a811cd8711c82455');
     const navigate = useNavigate();
     const [auth, setAuth] = useState(false);
 
@@ -14,7 +15,7 @@ export default function App() {
 
     return (
         <Routes>
-            <Route path={'/'} element={<TaskList />}/>
+            <Route path={'/'} element={<TaskList userId = {userId}/>}/>
             <Route path={'/auth'} element={<UserAuth onAuth = {setAuth}/>}/>
             <Route path={'*'} element={<Navigate to = '/' />}/>
         </Routes>
