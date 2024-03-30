@@ -8,31 +8,43 @@ import "./TaskList.scss";
 export default function TaskList({userId}) {
     const [columns, setColumns] = useState({})
     useEffect(() => {
-        loadData();
-    }, []);
+        if (Object.keys(columns).length  === 0 )
+            axios.get(`${baseURL}/columns/user-columns`, {
+                params: {
+                    user_id: userId
+                }
+            })
+                .then(res => {
+                    setColumns(res.data)
+                })
+    }, [columns]);
 
-    function loadData(){
-        console.log('updated');
-        axios.get(`${baseURL}/columns/user-columns`, {
-            params: {
-                user_id: userId
-            }
-        })
-            .then(res => setColumns(res.data))
-    }
 
     let onDragEnd = result => {
         const {destination, source, draggableId} = result;
         if (!destination) return;
         if (destination.droppableId === source.droppableId && destination.index === source.index) return;
-        axios.patch(`${baseURL}/columns/drop-task`, {
-            user_id: userId,
-            task_id: draggableId,
-            source_id: source.droppableId,
-            destination_id: destination.droppableId,
-            destination_index: destination.index
-        })
-            .then(res => loadData())
+
+        let changedColumns = {...columns};
+        let sourceList = columns[source.droppableId];
+        let destinationList = columns[destination.droppableId];
+
+        sourceList.splice(sourceList.indexOf(draggableId),1);
+        destinationList.splice(destination.index, 0, draggableId);
+        changedColumns[source.droppableId] = sourceList;
+        changedColumns[destination.droppableId] = destinationList;
+        console.log(changedColumns);
+        setColumns(changedColumns);
+
+
+        // axios.patch(`${baseURL}/columns/drop-task`, {
+        //     user_id: userId,
+        //     task_id: draggableId,
+        //     source_id: source.droppableId,
+        //     destination_id: destination.droppableId,
+        //     destination_index: destination.index
+        // })
+        //     .then(res => loadData())
     }
 
     return (
