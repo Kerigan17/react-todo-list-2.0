@@ -4,7 +4,7 @@ import './Task.scss'
 
 export default function Task({task, index}) {
     return (
-        <Draggable draggableId={task._id} index={index}>
+        <Draggable key={task._id} draggableId={task._id} index={index}>
             {(provided) => (
                 <div className={'task'}
                      {...provided.draggableProps}
@@ -12,6 +12,7 @@ export default function Task({task, index}) {
                      ref={provided.innerRef}
                 >
                     <div className={'task__title'}>{task.title}</div>
+                    <div className={'task__id'}>{task._id}</div>
                     <div className="task__date">
                         <svg width="20px" height="20px" viewBox="0 0 30 30" version="1.1"
                              xmlns="http://www.w3.org/2000/svg">

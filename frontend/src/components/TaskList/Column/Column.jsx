@@ -9,13 +9,19 @@ export default function Column({name, tasksIds}) {
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
+        if(tasksIds.length===0){
+            setTasks([]);
+            return;
+        }
         axios.get(`${baseURL}/tasks/all-tasks`, {
             params: {
                 tasksIds: tasksIds
             }
         })
-            .then(res => setTasks(res.data))
-    }, []);
+            .then(res => {
+                setTasks(res.data.toSorted((a,b) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id)));
+            })
+    }, [tasksIds.length,tasksIds]);//TODO add check for taskIds changing
 
     return (
         <div className={name}>

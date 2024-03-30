@@ -6,45 +6,46 @@ import Column from "./Column/Column";
 import "./TaskList.scss";
 
 export default function TaskList({userId}) {
+
     const [columns, setColumns] = useState({})
+
     useEffect(() => {
-        if (Object.keys(columns).length  === 0 )
-            axios.get(`${baseURL}/columns/user-columns`, {
-                params: {
-                    user_id: userId
-                }
+        console.log(columns);
+        if (Object.keys(columns).length  !== 0 ) return
+        axios.get(`${baseURL}/columns/user-columns`, {
+            params: {
+                user_id: userId
+            }
+        })
+            .then(res => {
+                setColumns(res.data)
             })
-                .then(res => {
-                    setColumns(res.data)
-                })
-    }, [columns]);
+    }, [columns, userId]);
 
 
     let onDragEnd = result => {
         const {destination, source, draggableId} = result;
         if (!destination) return;
-        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
-
-        let changedColumns = {...columns};
-        let sourceList = columns[source.droppableId];
-        let destinationList = columns[destination.droppableId];
-
-        sourceList.splice(sourceList.indexOf(draggableId),1);
-        destinationList.splice(destination.index, 0, draggableId);
-        changedColumns[source.droppableId] = sourceList;
-        changedColumns[destination.droppableId] = destinationList;
-        console.log(changedColumns);
-        setColumns(changedColumns);
-
-
-        // axios.patch(`${baseURL}/columns/drop-task`, {
-        //     user_id: userId,
-        //     task_id: draggableId,
-        //     source_id: source.droppableId,
-        //     destination_id: destination.droppableId,
-        //     destination_index: destination.index
-        // })
-        //     .then(res => loadData())
+        const sourceList = Array.from(columns[source.droppableId])
+        let destinationList =  Array.from(columns[destination.droppableId])
+        sourceList.splice(source.index, 1);
+        if (destination.droppableId === source.droppableId)
+        {
+            if(destination.index === source.index) return;
+            destinationList = sourceList;
+        }
+        destinationList.splice(destination.index, 0, draggableId)
+        const updatedColumns = {
+            ...columns,
+            [source.droppableId]:sourceList,
+            [destination.droppableId]: destinationList
+        }
+        setColumns(updatedColumns)
+        axios.patch(`${baseURL}/columns/drop-task`, {
+            user_id: userId,
+            columns:updatedColumns
+        })
+            .then(res => console.log(res))
     }
 
     return (

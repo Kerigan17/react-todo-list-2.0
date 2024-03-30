@@ -11,22 +11,12 @@ router.get("/user-columns", async (req, res) => {
 });
 
 router.patch("/drop-task", async (req, res) => {
-    const {user_id, task_id, source_id, destination_id, destination_index} = req.body;
+    const {user_id, columns} = req.body;
     let collection = await db.collection("columns");
-    let result = await collection.findOne({user_id:user_id});
-    let source = result.data[source_id];
-    let destination = result.data[destination_id];
-
-    source.splice(source.indexOf(task_id),1);
-    destination.splice(destination_index, 0, task_id);
-    result.data[source_id] = source;
-    result.data[destination_id] = destination;
-
-    console.log(result.data);
-    result = await collection.updateOne(
+    let result = await collection.updateOne(
         {user_id:user_id},
         {
-            $set:{data:result.data}
+            $set:{data:columns}
         }
     );
 

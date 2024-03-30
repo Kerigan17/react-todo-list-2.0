@@ -4,11 +4,11 @@ import {ObjectID} from "mongodb";
 const router = express.Router();
 
 router.get("/all-tasks", async (req, res) => {
+    const{tasksIds} = req.query;
     let collection = await db.collection("tasks");
     for(let i = 0; i < req.query.tasksIds.length; i++)
         req.query.tasksIds[i] = new ObjectID(req.query.tasksIds[i]);
-    let result = await collection.find({_id:{$in: req.query.tasksIds}}).toArray();
-
+    let result = await collection.find({_id:{$in: tasksIds}}).toArray();
     if (!result) res.send("Not found").status(404);
     else res.send(result).status(200);
 });
