@@ -1,11 +1,15 @@
-import {Droppable} from "react-beautiful-dnd";
-import Task from "../Task/Task";
-import './Column.scss';
 import {useEffect, useState} from "react";
 import axios from "axios";
-import {baseURL} from "../../../config.mjs";
+import {baseURL} from "../../../config";
+import {Droppable} from 'react-beautiful-dnd'
+import Task from "../Task/Task";
 
-export default function Column({name, tasksIds}) {
+interface ColumnProps{
+    name:string,
+    tasksIds: Array<string>
+}
+
+export default function Column({name, tasksIds = []}:ColumnProps){
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
@@ -19,7 +23,7 @@ export default function Column({name, tasksIds}) {
             }
         })
             .then(res => {
-                setTasks(res.data.toSorted((a,b) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id)));
+                setTasks(res.data);//.toSorted((a:object,b:object) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id))
             })
     }, [tasksIds.length,tasksIds]);
 
@@ -32,7 +36,7 @@ export default function Column({name, tasksIds}) {
 
             <Droppable droppableId={name}>
 
-            {(provided) =>
+                {(provided) =>
                     <div className={'column'}
                          ref={provided.innerRef}
                          {...provided.droppableProps}
@@ -47,6 +51,5 @@ export default function Column({name, tasksIds}) {
                 }
             </Droppable>
         </div>
-
-    );
+    )
 }
