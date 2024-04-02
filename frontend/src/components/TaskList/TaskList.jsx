@@ -41,7 +41,6 @@ export default function TaskList({userId}) {
             [destination.droppableId]: destinationList
         }
         setColumns(updatedColumns)
-
         axios.patch(`${baseURL}/columns/drop-task`, {
             user_id: userId,
             columns:updatedColumns

@@ -23,7 +23,8 @@ export default function Column({name, tasksIds = []}:ColumnProps){
             }
         })
             .then(res => {
-                setTasks(res.data);//.toSorted((a:object,b:object) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id))
+                let data: string[] = res.data;
+                setTasks(res.data.toSorted((a:{_id:string},b:{_id:string}) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id)));
             })
     }, [tasksIds.length,tasksIds]);
 

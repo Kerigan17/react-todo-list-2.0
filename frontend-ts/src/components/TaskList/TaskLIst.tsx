@@ -27,15 +27,15 @@ export default function TaskList({userId}:{userId:string}) {
 
 
 
-    let onDragEnd = (result: { destination: any; source: any; draggableId: any; }) => {
+    let onDragEnd = (result: any) => {
         const {destination, source, draggableId} = result;
         if (!destination) return;
         dispatch(moveItem({
-            sourceId: source.draggableId,
-            destinationId:destination.draggableId,
+            sourceId: source.droppableId,
+            destinationId: destination.droppableId,
             draggableId: draggableId,
             sourceIndex: source.index,
-            destinationIndex:destination.index
+            destinationIndex: destination.index
         }));
     }
 

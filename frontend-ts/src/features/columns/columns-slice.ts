@@ -1,7 +1,7 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {baseURL} from "../../config";
-import {Simulate} from "react-dom/test-utils";
+import {scryRenderedComponentsWithType, Simulate} from "react-dom/test-utils";
 import progress = Simulate.progress;
 
 interface ColumnsState{
@@ -16,14 +16,6 @@ const initialState: ColumnsState = {
     done: []
 }
 
-type moveItemPayload = {
-    sourceId:any,
-    destinationId:any,
-    draggableId: string,
-    sourceIndex: number,
-    destinationIndex:number
-}
-
 const columnsSlice = createSlice({
     name: 'columns',
     initialState,
@@ -34,36 +26,31 @@ const columnsSlice = createSlice({
             state.progress = payload.progress;
             state.done = payload.done;
         },
-        moveItem(state, action:PayloadAction<moveItemPayload>){
-
-            const sourceId = action.payload.sourceId as keyof ColumnsState;
-            const destinationId = action.payload.destinationId as keyof ColumnsState;
+        moveItem(state, action){
+            const sourceId: keyof ColumnsState = action.payload.sourceId;
+            const destinationId: keyof ColumnsState = action.payload.destinationId;
             const draggableId = action.payload.draggableId;
             const sourceIndex =  action.payload.sourceIndex;
-            const destinationIndex =  action.payload.destinationIndex
+            const destinationIndex =  action.payload.destinationIndex;
 
-            // const sourceList = Array.from(state[sourceId])
-            // let destinationList =  Array.from(state[destinationId])
-            //
-            // sourceList.splice(sourceIndex, 1);
-            // if (destinationId === sourceId)
-            // {
-            //     if(destinationIndex === sourceIndex) return;
-            //     destinationList = sourceList;
-            // }
-            // destinationList.splice(destinationIndex, 0, draggableId)
-            // const updatedColumns = {
-            //     ...state,
-            //     [sourceId]:sourceList,
-            //     [destinationId]: destinationList
-            // }
-            // setColumns(updatedColumns);
+            const sourceList = Array.from(state[sourceId])
+            let destinationList = Array.from(state[destinationId])
+            sourceList.splice(sourceIndex, 1);
+            if (destinationId === sourceId)
+            {
+                if(destinationIndex === sourceIndex) return;
+                destinationList = sourceList;
+            }
+            destinationList.splice(destinationIndex, 0, draggableId)
+            state[sourceId] = sourceList;
+            state[destinationId] = destinationList;
+
             // axios.patch(`${baseURL}/columns/drop-task`, {
             //     user_id: userId,
             //     columns:updatedColumns
             // })
             //     .then(res => console.log(res))
-        },
+        }
     }
 })
 
