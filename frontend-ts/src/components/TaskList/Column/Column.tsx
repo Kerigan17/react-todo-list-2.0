@@ -13,10 +13,6 @@ export default function Column({name, tasksIds = []}:ColumnProps){
     const [tasks, setTasks] = useState([]);
 
     useEffect(() => {
-        if(tasksIds.length===0){
-            setTasks([]);
-            return;
-        }
         axios.get(`${baseURL}/tasks/all-tasks`, {
             params: {
                 tasksIds: tasksIds
@@ -26,6 +22,14 @@ export default function Column({name, tasksIds = []}:ColumnProps){
                 let data: string[] = res.data;
                 setTasks(res.data.toSorted((a:{_id:string},b:{_id:string}) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id)));
             })
+    }, []);
+
+    useEffect(() => {
+        if(tasksIds.length===0){
+            setTasks([]);
+            return;
+        }
+
     }, [tasksIds.length,tasksIds]);
 
     return (

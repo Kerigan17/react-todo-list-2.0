@@ -35,7 +35,8 @@ export default function TaskList({userId}:{userId:string}) {
             destinationId: destination.droppableId,
             draggableId: draggableId,
             sourceIndex: source.index,
-            destinationIndex: destination.index
+            destinationIndex: destination.index,
+            userId: userId
         }));
     }
 

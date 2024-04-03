@@ -5,24 +5,10 @@ import {useEffect, useState} from "react";
 import axios from "axios";
 import {baseURL} from "../../../config.mjs";
 
-export default function Column({name, tasksIds}) {
-    const [tasks, setTasks] = useState([]);
-
+export default function Column({name, tasks}) {
     useEffect(() => {
-        if(tasksIds.length===0){
-            setTasks([]);
-            return;
-        }
-        axios.get(`${baseURL}/tasks/all-tasks`, {
-            params: {
-                tasksIds: tasksIds
-            }
-        })
-            .then(res => {
-                setTasks(res.data.toSorted((a,b) => tasksIds.indexOf(a._id)-tasksIds.indexOf(b._id)));
-            })
-    }, [tasksIds.length,tasksIds]);
 
+    }, [tasks]);
     return (
         <div className={name}>
             <div className={'column-header'}>
@@ -47,6 +33,5 @@ export default function Column({name, tasksIds}) {
                 }
             </Droppable>
         </div>
-
     );
 }

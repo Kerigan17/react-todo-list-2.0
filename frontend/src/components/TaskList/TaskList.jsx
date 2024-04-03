@@ -8,9 +8,10 @@ import "./TaskList.scss";
 export default function TaskList({userId}) {
 
     const [columns, setColumns] = useState({})
+    const [tasks, setTasks] = useState([])
 
     useEffect(() => {
-        console.log(columns);
+        console.log(tasks);
         if (Object.keys(columns).length  !== 0 ) return
         axios.get(`${baseURL}/columns/user-columns`, {
             params: {
@@ -20,7 +21,16 @@ export default function TaskList({userId}) {
         .then(res => {
             setColumns(res.data)
         })
-    }, [columns, userId]);
+        axios.get(`${baseURL}/tasks/all-tasks`, {
+            params: {
+                user_id: userId
+            }
+        })
+            .then(res => {
+                setTasks(res.data)
+            })
+
+    }, [columns, tasks, userId]);
 
 
     let onDragEnd = result => {
@@ -41,11 +51,22 @@ export default function TaskList({userId}) {
             [destination.droppableId]: destinationList
         }
         setColumns(updatedColumns)
+
         axios.patch(`${baseURL}/columns/drop-task`, {
             user_id: userId,
             columns:updatedColumns
         })
             .then(res => console.log(res))
+    }
+
+    const splitTasks = {
+        new: selectTasks('new'),
+        progress: selectTasks('progress'),
+        done: selectTasks('done')
+    }
+    function selectTasks(key){
+        return tasks.filter(task=>columns[key].includes(task._id))
+            .toSorted((a,b) => columns[key].indexOf(a._id)-columns.new.indexOf(b._id));
     }
 
     return (
@@ -54,7 +75,7 @@ export default function TaskList({userId}) {
             <div className="columns">
                 {
                     Object.entries(columns).map((column, index) =>
-                        <Column key={index} name={column[0]} tasksIds={column[1]}/>
+                        <Column key={index} name={column[0]} tasks={splitTasks[column[0]]}/>
                     )
                 }
             </div>

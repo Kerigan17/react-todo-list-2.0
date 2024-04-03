@@ -1,8 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 import axios from "axios";
 import {baseURL} from "../../config";
-import {scryRenderedComponentsWithType, Simulate} from "react-dom/test-utils";
-import progress = Simulate.progress;
 
 interface ColumnsState{
     new: Array<string>;
@@ -32,6 +30,7 @@ const columnsSlice = createSlice({
             const draggableId = action.payload.draggableId;
             const sourceIndex =  action.payload.sourceIndex;
             const destinationIndex =  action.payload.destinationIndex;
+            const userId = action.payload.userId;
 
             const sourceList = Array.from(state[sourceId])
             let destinationList = Array.from(state[destinationId])
@@ -45,11 +44,11 @@ const columnsSlice = createSlice({
             state[sourceId] = sourceList;
             state[destinationId] = destinationList;
 
-            // axios.patch(`${baseURL}/columns/drop-task`, {
-            //     user_id: userId,
-            //     columns:updatedColumns
-            // })
-            //     .then(res => console.log(res))
+            axios.patch(`${baseURL}/columns/drop-task`, {
+                user_id: userId,
+                columns: state
+            })
+                .then(res => console.log(res))
         }
     }
 })
