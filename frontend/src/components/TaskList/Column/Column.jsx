@@ -1,9 +1,7 @@
 import {Droppable} from "react-beautiful-dnd";
 import Task from "../Task/Task";
 import './Column.scss';
-import {useEffect, useState} from "react";
-import axios from "axios";
-import {baseURL} from "../../../config.mjs";
+import {useEffect} from "react";
 
 export default function Column({name, tasks}) {
     useEffect(() => {
