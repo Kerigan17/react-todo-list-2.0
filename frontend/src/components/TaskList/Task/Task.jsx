@@ -11,8 +11,11 @@ export default function Task({task, index}) {
                      {...provided.dragHandleProps}
                      ref={provided.innerRef}
                 >
-                    <div className={'task__title'}>{task.title}</div>
-                    <div className={'task__id'}>{task._id}</div>
+                    <div className={'task-header'}>
+                        <div className={'task__title'}>{task.title}</div>
+                        <div className={"task__priority " + task.priority}>{task.priority}</div>
+                    </div>
+
                     <div className="task__date">
                         <svg width="20px" height="20px" viewBox="0 0 30 30" version="1.1"
                              xmlns="http://www.w3.org/2000/svg">
@@ -26,7 +29,6 @@ export default function Task({task, index}) {
                         </svg>
                         {task.date}
                     </div>
-                    <div className="task__priority">{task.priority}</div>
                     <div className={'task__text'}>{task.text}</div>
                 </div>
             )}

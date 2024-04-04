@@ -7,7 +7,7 @@
 
   body {
     background: linear-gradient(45deg, #A0C2FF, #ecb9fc);
-    padding-top: 200px;
+    padding-top: 100px;
     padding-bottom: 200px;
     box-sizing: border-box;
     display: flex;
@@ -15,6 +15,7 @@
     align-items: center;
 
     .form-block {
+      margin-top: 100px;
       display: flex;
       flex-direction: column;
       width: 350px;

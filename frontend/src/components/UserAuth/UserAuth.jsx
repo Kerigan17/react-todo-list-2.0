@@ -26,7 +26,7 @@ export default function UserAuth({onAuth}) {
                     } else {
                         setError('');
                         console.log('access is allowed')
-                        onAuth(true);
+                        onAuth(response.data._id);
                     }
                 })
         } else {
@@ -42,7 +42,7 @@ export default function UserAuth({onAuth}) {
             login: login,
             password: password
         })
-            .then(()=>checkUser())
+            .then(()=> checkUser())
             .catch(error => setError(error.response.data));
     }
 

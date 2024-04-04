@@ -9,14 +9,19 @@ export default function App() {
     const [auth, setAuth] = useState(false);
 
     useEffect(() => {
-        // if (!auth) navigate('/auth');
-        // else navigate('/');
+        if (!auth) navigate('/auth');
+        else navigate('/');
     }, [navigate, auth]);
+
+    function handleAuth(user) {
+        setUserId(user);
+        setAuth(true);
+    }
 
     return (
         <Routes>
             <Route path={'/'} element={<TaskList userId = {userId}/>}/>
-            <Route path={'/auth'} element={<UserAuth onAuth = {setAuth}/>}/>
+            <Route path={'/auth'} element={<UserAuth onAuth = {handleAuth}/> }/>
             <Route path={'*'} element={<Navigate to = '/' />}/>
         </Routes>
     )

@@ -6,9 +6,8 @@ import Column from "./Column/Column";
 import "./TaskList.scss";
 
 export default function TaskList({userId}) {
-    const [columns, setColumns] = useState({});
+    const [columns, setColumns] = useState({new: [], progress: [], done: []});
     const [tasks, setTasks] = useState([]);
-
 
     useEffect(() => {
         axios.get(`${baseURL}/columns/user-columns`, {
@@ -18,7 +17,8 @@ export default function TaskList({userId}) {
         })
             .then(res => {
                 setColumns(res.data)
-            });
+            })
+            .catch(err =>  console.log(err));
 
         axios.get(`${baseURL}/tasks/all-tasks`, {
             params: {
@@ -66,11 +66,11 @@ export default function TaskList({userId}) {
         }
         setColumns(updatedColumns)
 
-        // axios.patch(`${baseURL}/columns/drop-task`, {
-        //     user_id: userId,
-        //     columns:updatedColumns
-        // })
-        //     .then(res => console.log(res))
+        axios.patch(`${baseURL}/columns/drop-task`, {
+            user_id: userId,
+            columns:updatedColumns
+        })
+            .then(res => console.log(res))
     }
 
     return (
