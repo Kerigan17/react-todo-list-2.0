@@ -5,7 +5,7 @@ import {DragDropContext} from 'react-beautiful-dnd'
 import Column from "./Column/Column";
 import "./TaskList.scss";
 
-export default function TaskList({userId}) {
+export default function TaskList({userId, openModal}) {
     const [columns, setColumns] = useState({new: [], progress: [], done: []});
     const [tasks, setTasks] = useState([]);
 
@@ -48,8 +48,6 @@ export default function TaskList({userId}) {
         if (!destination) return;
         const sourceList = Array.from(columns[source.droppableId])
         let destinationList =  Array.from(columns[destination.droppableId])
-        console.log(sourceList)
-        console.log(destinationList)
 
         sourceList.splice(source.index, 1);
         if (destination.droppableId === source.droppableId) {
@@ -74,15 +72,17 @@ export default function TaskList({userId}) {
     }
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <h2 className={'tasks-title'}>Tasks</h2>
-            <div className="columns">
-                {
-                    Object.entries(columns).map((column, index) =>
-                        <Column key={index} name={column[0]} tasks={splitTasks[column[0]]}/>
-                    )
-                }
-            </div>
-        </DragDropContext>
+        <>
+            <DragDropContext onDragEnd={onDragEnd}>
+                <h2 className={'tasks-title'}>Tasks</h2>
+                <div className="columns">
+                    {
+                        Object.entries(columns).map((column, index) =>
+                            <Column key={index} name={column[0]} tasks={splitTasks[column[0]]} openModal={openModal}/>
+                        )
+                    }
+                </div>
+            </DragDropContext>
+        </>
     )
 }

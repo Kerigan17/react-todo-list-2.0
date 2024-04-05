@@ -3,7 +3,7 @@ import Task from "../Task/Task";
 import './Column.scss';
 import {useEffect} from "react";
 
-export default function Column({name, tasks=[]}) {
+export default function Column({name, tasks=[], openModal}) {
     useEffect(() => {}, [tasks]);
 
     function addTask() {
@@ -12,7 +12,7 @@ export default function Column({name, tasks=[]}) {
 
     return (
         <div className={name}>
-            <div className={'column-header'} onClick={addTask}>
+            <div className={'column-header'} onClick={openModal}>
                 <h2 className="column-title">{name.toUpperCase()}</h2>
             </div>
             <Droppable droppableId={name}>
