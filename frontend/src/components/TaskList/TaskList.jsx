@@ -30,11 +30,13 @@ export default function TaskList({userId}) {
             .then(res => {
                 setTasks(res.data)
             });
-
     }, []);
 
-    function closeOpenModal(event) {
+    function closeOpenModal(name) {
         setOpenModal(!openModal);
+
+
+        console.log(name)
     }
 
     function selectTasks(key){
@@ -59,8 +61,24 @@ export default function TaskList({userId}) {
             priority: priority,
             date: date,
             user_id: userId
-        })
-        console.log(newTasks)
+        });
+        setTasks(newTasks)
+    }
+
+    function deleteTask(task_id) {
+        // axios.delete(`${baseURL}/tasks/delete-task`, {
+        //     params: {
+        //         task_id: task_id
+        //     }
+        // })
+        //     .then(res => {
+        //
+        //     })
+
+        let element = tasks.find((el) => el._id == task_id);
+        let taskIndex = tasks.indexOf(element)
+        console.log(taskIndex)
+        let newTasks = tasks.splice(taskIndex, 1);
         setTasks(newTasks)
     }
 
@@ -99,7 +117,11 @@ export default function TaskList({userId}) {
                 <div className="columns">
                     {
                         Object.entries(columns).map((column, index) =>
-                            <Column key={index} name={column[0]} tasks={splitTasks[column[0]]} openModal={closeOpenModal}/>
+                            <Column key={index} name={column[0]}
+                                    tasks={splitTasks[column[0]]}
+                                    openModal={closeOpenModal}
+                                    deleteTask={deleteTask}
+                            />
                         )
                     }
                 </div>
