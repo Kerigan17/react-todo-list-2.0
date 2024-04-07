@@ -1,12 +1,13 @@
 import './Modal.scss';
 import React from "react";
 import axios from "axios";
-import {baseURL} from "../../config.mjs";
+import {baseURL} from "../../../config.mjs";
 
-export default function Modal({closeModal, userId}) {
+export default function Modal({closeModal, userId, addTask}) {
     let taskTitle = React.createRef();
     let taskDescription = React.createRef();
     let priority = '';
+    let fullDate;
 
     function setPriority(element) {
         if (element.className.includes('active')) return;
@@ -18,12 +19,11 @@ export default function Modal({closeModal, userId}) {
     }
 
     function addNewTask() {
-        closeModal();
         let currentDate = new Date();
         let day = currentDate.getDay() < 10 ? ('0' + currentDate.getDay().toString()) : currentDate.getDay().toString();
         let mouth = currentDate.getMonth() < 10 ? ('0' + currentDate.getMonth().toString()) : currentDate.getMonth().toString();
         let year = currentDate.getFullYear().toString();
-        let fullDate = day + '.' + mouth + '.' + year;
+        fullDate = day + '.' + mouth + '.' + year;
 
         axios.post(`${baseURL}/tasks/add-task`, {
             taskTitle: taskTitle.current.value,
@@ -32,8 +32,42 @@ export default function Modal({closeModal, userId}) {
             date: fullDate,
             userId: userId
         })
-            .then()
-            .catch(error => console.log(error.response.data));
+            .then(res => {
+                pushNewColumns(res.data.insertedId);
+                addTask(
+                    res.data.insertedId,
+                    taskTitle.current.value,
+                    taskDescription.current.value,
+                    priority,
+                    fullDate,
+                    userId
+                )
+            })
+            .catch(error => console.log(error.message));
+
+        closeModal();
+
+    }
+
+    function pushNewColumns(taskId) {
+        let columns;
+
+        axios.get(`${baseURL}/columns/user-columns`, {
+            params: {
+                user_id: userId
+            }
+        })
+            .then(res => {
+                columns = res.data
+                columns.new.push(taskId);
+
+                axios.patch(`${baseURL}/columns/drop-task`, {
+                    user_id: userId,
+                    columns: columns
+                })
+                    .then(res => console.log(res))
+            })
+            .catch(err =>  console.log(err));
     }
 
     return (

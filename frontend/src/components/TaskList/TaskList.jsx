@@ -4,10 +4,12 @@ import axios from "axios";
 import {DragDropContext} from 'react-beautiful-dnd'
 import Column from "./Column/Column";
 import "./TaskList.scss";
+import Modal from "./Modal/Modal";
 
-export default function TaskList({userId, openModal}) {
+export default function TaskList({userId}) {
     const [columns, setColumns] = useState({new: [], progress: [], done: []});
     const [tasks, setTasks] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
         axios.get(`${baseURL}/columns/user-columns`, {
@@ -31,6 +33,10 @@ export default function TaskList({userId, openModal}) {
 
     }, []);
 
+    function closeOpenModal(event) {
+        setOpenModal(!openModal);
+    }
+
     function selectTasks(key){
         if (columns == undefined) return [];
         return tasks.filter(task=>columns[key].includes(task._id))
@@ -41,6 +47,21 @@ export default function TaskList({userId, openModal}) {
         new: selectTasks('new'),
         progress: selectTasks('progress'),
         done: selectTasks('done')
+    }
+
+    function addNewTask(taskId, title, description, priority, date, userId) {
+        let newTasks = tasks;
+
+        newTasks.push({
+            _id: taskId,
+            title: title,
+            text: description,
+            priority: priority,
+            date: date,
+            user_id: userId
+        })
+        console.log(newTasks)
+        setTasks(newTasks)
     }
 
     let onDragEnd = result => {
@@ -66,7 +87,7 @@ export default function TaskList({userId, openModal}) {
 
         axios.patch(`${baseURL}/columns/drop-task`, {
             user_id: userId,
-            columns:updatedColumns
+            columns: updatedColumns
         })
             .then(res => console.log(res))
     }
@@ -78,11 +99,12 @@ export default function TaskList({userId, openModal}) {
                 <div className="columns">
                     {
                         Object.entries(columns).map((column, index) =>
-                            <Column key={index} name={column[0]} tasks={splitTasks[column[0]]} openModal={openModal}/>
+                            <Column key={index} name={column[0]} tasks={splitTasks[column[0]]} openModal={closeOpenModal}/>
                         )
                     }
                 </div>
             </DragDropContext>
+            {openModal && <Modal closeModal={closeOpenModal} userId={userId} addTask={addNewTask}/>}
         </>
     )
 }
