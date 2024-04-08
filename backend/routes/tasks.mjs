@@ -24,7 +24,7 @@ router.post("/add-task", async (req, res) => {
     let collection = await db.collection("tasks");
     let result = await collection.insertOne({
         title: req.body.title,
-        text: req.body.description,
+        text: req.body.text,
         priority: req.body.priority,
         date: req.body.date,
         user_id: req.body.userId
