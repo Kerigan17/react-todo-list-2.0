@@ -2,7 +2,7 @@ import {Draggable} from "react-beautiful-dnd";
 import React from "react";
 import './Task.scss'
 
-export default function Task({task, index, deleteTask}) {
+export default function Task({task, index, deleteTask, name}) {
     function editTask() {
         console.log('edit')
     }
@@ -47,7 +47,7 @@ export default function Task({task, index, deleteTask}) {
                                 <rect x="0" y="0" width="36" height="36" fillOpacity="0"/>
                             </svg>
                         </div>
-                        <div className={'task__delete'} onClick={() => deleteTask(task._id)}>
+                        <div className={'task__delete'} onClick={() => deleteTask(task._id, name)}>
                             <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
                                  preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                                 <title>trash-line</title>

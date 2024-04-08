@@ -4,12 +4,10 @@ import axios from "axios";
 import {DragDropContext} from 'react-beautiful-dnd'
 import Column from "./Column/Column";
 import "./TaskList.scss";
-import Modal from "./Modal/Modal";
 
 export default function TaskList({userId}) {
     const [columns, setColumns] = useState({new: [], progress: [], done: []});
     const [tasks, setTasks] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
 
     useEffect(() => {
         axios.get(`${baseURL}/columns/user-columns`, {
@@ -32,17 +30,10 @@ export default function TaskList({userId}) {
             });
     }, []);
 
-    function closeOpenModal(name) {
-        setOpenModal(!openModal);
-
-
-        console.log(name)
-    }
-
     function selectTasks(key){
         if (columns == undefined) return [];
-        return tasks.filter(task=>columns[key].includes(task._id))
-            .toSorted((a,b) => columns[key].indexOf(a._id)-columns[key].indexOf(b._id));
+        return tasks.filter(task => columns[key].includes(task._id))
+            .toSorted((a,b) => columns[key].indexOf(a._id) - columns[key].indexOf(b._id));
     }
 
     const splitTasks = {
@@ -51,35 +42,53 @@ export default function TaskList({userId}) {
         done: selectTasks('done')
     }
 
-    function addNewTask(taskId, title, description, priority, date, userId) {
+    function addNewTask(task, columnName) {
         let newTasks = tasks;
 
-        newTasks.push({
-            _id: taskId,
-            title: title,
-            text: description,
-            priority: priority,
-            date: date,
-            user_id: userId
-        });
-        setTasks(newTasks)
+
+
+        axios.post(`${baseURL}/tasks/add-task`, task)
+            .then(res => {
+                task._id = res.data.insertedId;
+                newTasks.push(task);
+
+                let newColumns = {...columns};
+                newColumns[columnName].push(task._id);
+
+                axios.patch(`${baseURL}/columns/drop-task`, {
+                    user_id: userId,
+                    columns: newColumns
+                })
+                    .then(res => {
+                        setTasks(newTasks);
+                        setColumns(newColumns);
+                    });
+
+            })
+            .catch(error => console.log(error.message));
     }
 
-    function deleteTask(task_id) {
-        // axios.delete(`${baseURL}/tasks/delete-task`, {
-        //     params: {
-        //         task_id: task_id
-        //     }
-        // })
-        //     .then(res => {
-        //
-        //     })
+    function deleteTask(task_id, name) {
+        //удаляем таск из колонки (не происходит перерисовка)
+        let newColumns = columns;
+        newColumns[name] = newColumns[name].filter(item => item !== task_id);
+        setColumns(newColumns);
 
-        let element = tasks.find((el) => el._id == task_id);
-        let taskIndex = tasks.indexOf(element)
-        console.log(taskIndex)
-        let newTasks = tasks.splice(taskIndex, 1);
-        setTasks(newTasks)
+        axios.patch(`${baseURL}/columns/drop-task`, {
+            user_id: userId,
+            columns: newColumns
+        })
+            .then(res => console.log(res))
+
+        let newTasks = tasks.filter(item => item._id !== task_id);
+        setTasks(newTasks);
+
+        axios.delete(`${baseURL}/tasks/delete-task`, {
+            params: {
+                task_id: task_id
+            }
+        })
+            .then(res => {});
     }
 
     let onDragEnd = result => {
@@ -119,14 +128,14 @@ export default function TaskList({userId}) {
                         Object.entries(columns).map((column, index) =>
                             <Column key={index} name={column[0]}
                                     tasks={splitTasks[column[0]]}
-                                    openModal={closeOpenModal}
                                     deleteTask={deleteTask}
+                                    userId={userId}
+                                    onTaskAdded={addNewTask}
                             />
                         )
                     }
                 </div>
             </DragDropContext>
-            {openModal && <Modal closeModal={closeOpenModal} userId={userId} addTask={addNewTask}/>}
         </>
     )
 }

@@ -23,8 +23,8 @@ router.delete("/delete-task", async (req, res) => {
 router.post("/add-task", async (req, res) => {
     let collection = await db.collection("tasks");
     let result = await collection.insertOne({
-        title: req.body.taskTitle,
-        text: req.body.taskDescription,
+        title: req.body.title,
+        text: req.body.description,
         priority: req.body.priority,
         date: req.body.date,
         user_id: req.body.userId
