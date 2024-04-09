@@ -32,4 +32,16 @@ router.post("/add-task", async (req, res) => {
     res.send(result).status(204);
 });
 
+router.patch("/edit-task", async (req, res) => {
+    const id = {_id: ObjectId(req.body.task_id)};
+    let collection = await db.collection("tasks"); //req.body.task
+    let result = await collection.updateOne(
+        id,
+        {
+            $set: req.body.update_task
+        }
+    );
+    res.send(result).status(200);
+});
+
 export default router;

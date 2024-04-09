@@ -1,13 +1,8 @@
 import {Draggable} from "react-beautiful-dnd";
 import React from "react";
 import './Task.scss'
-import Modal from "../Modal/Modal";
 
-export default function Task({task, index, deleteTask, name}) {
-    function editTask() {
-        console.log('edit')
-    }
-
+export default function Task({task, index, deleteTask, name, handleOpenModal}) {
     return (
         <>
             <Draggable key={task._id} draggableId={task._id} index={index}>
@@ -40,7 +35,11 @@ export default function Task({task, index, deleteTask, name}) {
                         </div>
 
                         <div className={'task__actions'}>
-                            <div className={'task__edit'} onClick={editTask}>
+                            <div className={'task__edit'} onClick={() => handleOpenModal('edit', task._id, {
+                                title: task.title,
+                                text: task.text,
+                                priority: task.priority
+                            })}>
                                 <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
                                      preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                                     <title>pencil-line</title>
@@ -71,8 +70,6 @@ export default function Task({task, index, deleteTask, name}) {
                     </div>
                 )}
             </Draggable>
-
-
         </>
     )
 }

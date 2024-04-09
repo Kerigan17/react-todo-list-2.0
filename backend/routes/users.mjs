@@ -51,14 +51,4 @@ router.patch("/comment/:id", async (req, res) => {
     res.send(result).status(200);
 });
 
-// Delete an entry
-router.delete("/:id", async (req, res) => {
-    const query = {_id: ObjectId(req.params.id)};
-
-    const collection = db.collection("posts");
-    let result = await collection.deleteOne(query);
-
-    res.send(result).status(200);
-});
-
 export default router;
