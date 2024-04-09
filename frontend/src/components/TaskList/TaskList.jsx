@@ -28,7 +28,7 @@ export default function TaskList({userId}) {
             .then(res => {
                 setTasks(res.data)
             });
-    }, []);
+    },[userId]);
 
     function selectTasks(key){
         if (columns == undefined) return [];
@@ -44,8 +44,6 @@ export default function TaskList({userId}) {
 
     function addNewTask(task, columnName) {
         let newTasks = tasks;
-
-
 
         axios.post(`${baseURL}/tasks/add-task`, task)
             .then(res => {
@@ -69,7 +67,6 @@ export default function TaskList({userId}) {
     }
 
     function deleteTask(task_id, name) {
-        //удаляем таск из колонки (не происходит перерисовка)
         let newColumns = columns;
         newColumns[name] = newColumns[name].filter(item => item !== task_id);
         setColumns(newColumns);

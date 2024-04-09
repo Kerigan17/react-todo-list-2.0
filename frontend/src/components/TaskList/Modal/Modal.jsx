@@ -17,7 +17,7 @@ export default function Modal({userId, onModalSubmit, name}) {
         priority = element.classList[0];
     }
     function handleCloseModal() {
-        setModal(false)
+        setModal(false);
     }
 
     function HandleOpenModal() {
@@ -46,6 +46,7 @@ export default function Modal({userId, onModalSubmit, name}) {
         <div>
             <div className={'column-header'} onClick={HandleOpenModal}>
                 <h2 className="column-title">{name.toUpperCase()}</h2>
+                <div className={'add-task'}>Click for add</div>
             </div>
 
             {modal &&

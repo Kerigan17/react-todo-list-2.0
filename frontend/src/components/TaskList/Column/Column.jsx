@@ -4,19 +4,16 @@ import './Column.scss';
 import React, {useEffect} from "react";
 import Modal from "../Modal/Modal";
 
-export default function Column({name, tasks=[], openModal, deleteTask, userId, onTaskAdded}) {
+export default function Column({name, tasks=[], deleteTask, userId, onTaskAdded}) {
     useEffect(() => {
         //console.log(tasks)
     }, [tasks]);
-
-    function addTask() {
-        alert('click')
-    }
 
     return (
         <>
             <div className={name}>
                 <Modal userId={userId} onModalSubmit={onTaskAdded} name={name}/>
+
                 <Droppable droppableId={name}>
                     {(provided) =>
                         <div className={'column'}
@@ -34,6 +31,5 @@ export default function Column({name, tasks=[], openModal, deleteTask, userId, o
                 </Droppable>
             </div>
         </>
-
     );
 }
