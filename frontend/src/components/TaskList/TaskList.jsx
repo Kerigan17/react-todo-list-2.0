@@ -36,7 +36,6 @@ export default function TaskList({userId}) {
     function handleOpenModal(column = '', operation, data, taskId = '') {
         modal.current.open(column, operation, data, taskId);
     }
-    console.log(tasks);
     function selectTasks(key) {
         if (columns == undefined) return [];
         return tasks.filter(task => columns[key].includes(task._id))
@@ -74,16 +73,17 @@ export default function TaskList({userId}) {
     }
 
     function editTask(task, taskId) {
-        let newTasks = tasks;
-        task._id = taskId;
-        console.log(task._id);
+        let newTasks = Array.of(tasks);
         axios.patch(`${baseURL}/tasks/edit-task`, {
-            update_task: task
+            update_task: task,
+            task_id: taskId
         })
             .then(res => {
-                let taskIndex = newTasks.findIndex(item => item._id === task._id);
-                newTasks.splice(taskIndex, 1, task);
-
+                let taskIndex = newTasks.findIndex(item => item._id === taskId);
+                newTasks.splice(taskIndex, 1, {
+                    _id: taskId,
+                    ...task
+                });
                 setTasks(newTasks);
             });
     }

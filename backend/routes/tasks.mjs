@@ -27,7 +27,7 @@ router.post("/add-task", async (req, res) => {
         text: req.body.text,
         priority: req.body.priority,
         date: req.body.date,
-        user_id: req.body.userId
+        user_id: req.body.user_id
     });
     res.send(result).status(204);
 });
@@ -36,7 +36,7 @@ router.patch("/edit-task", async (req, res) => {
     let collection = await db.collection("tasks");
     console.log(req.body.update_task)
     let result = await collection.updateOne(
-        {_id: ObjectId(req.body.update_task._id)},
+        {_id: ObjectId(req.body.task_id)},
         {
             $set: req.body.update_task
         }
