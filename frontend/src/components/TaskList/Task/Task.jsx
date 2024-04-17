@@ -35,39 +35,44 @@ export default function Task({task, index, deleteTask, name, handleOpenModal}) {
                         </div>
 
                         <div className={'task__actions'}>
-                            <div className={'task__edit'} onClick={() => handleOpenModal('edit', task._id, {
-                                title: task.title,
-                                text: task.text,
-                                priority: task.priority
-                            })}>
-                                <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
-                                     preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                                    <title>pencil-line</title>
-                                    <path className="clr-i-outline clr-i-outline-path-1"
-                                          d="M33.87,8.32,28,2.42a2.07,2.07,0,0,0-2.92,0L4.27,23.2l-1.9,8.2a2.06,2.06,0,0,0,2,2.5,2.14,2.14,0,0,0,.43,0L13.09,32,33.87,11.24A2.07,2.07,0,0,0,33.87,8.32ZM12.09,30.2,4.32,31.83l1.77-7.62L21.66,8.7l6,6ZM29,13.25l-6-6,3.48-3.46,5.9,6Z"></path>
-                                    <rect x="0" y="0" width="36" height="36" fillOpacity="0"/>
-                                </svg>
-                            </div>
+                            <div className={'task__edit'} onClick={() => handleOpenModal(
+                                name,
+                                'edit',
+                                {
+                                    title: task.title,
+                                    text: task.text,
+                                    priority: task.priority
+                                },
+                                task._id
+                            )}>
+                            <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
+                                 preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                                <title>pencil-line</title>
+                                <path className="clr-i-outline clr-i-outline-path-1"
+                                      d="M33.87,8.32,28,2.42a2.07,2.07,0,0,0-2.92,0L4.27,23.2l-1.9,8.2a2.06,2.06,0,0,0,2,2.5,2.14,2.14,0,0,0,.43,0L13.09,32,33.87,11.24A2.07,2.07,0,0,0,33.87,8.32ZM12.09,30.2,4.32,31.83l1.77-7.62L21.66,8.7l6,6ZM29,13.25l-6-6,3.48-3.46,5.9,6Z"></path>
+                                <rect x="0" y="0" width="36" height="36" fillOpacity="0"/>
+                            </svg>
+                        </div>
 
-                            <div className={'task__delete'} onClick={() => deleteTask(task._id, name)}>
-                                <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
-                                     preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
-                                    <title>trash-line</title>
-                                    <path className="clr-i-outline clr-i-outline-path-1"
-                                          d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path>
-                                    <path className="clr-i-outline clr-i-outline-path-2"
-                                          d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
-                                    <rect className="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2"
-                                          height="15"></rect>
-                                    <rect className="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2"
-                                          height="15"></rect>
-                                    <path className="clr-i-outline clr-i-outline-path-5"
-                                          d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
-                                    <rect x="0" y="0" width="36" height="36" fillOpacity="0"/>
-                                </svg>
-                            </div>
+                        <div className={'task__delete'} onClick={() => deleteTask(task._id, name)}>
+                            <svg fill="#000000" width="20px" height="20px" viewBox="0 0 36 36" version="1.1"
+                                 preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                                <title>trash-line</title>
+                                <path className="clr-i-outline clr-i-outline-path-1"
+                                      d="M27.14,34H8.86A2.93,2.93,0,0,1,6,31V11.23H8V31a.93.93,0,0,0,.86,1H27.14A.93.93,0,0,0,28,31V11.23h2V31A2.93,2.93,0,0,1,27.14,34Z"></path>
+                                <path className="clr-i-outline clr-i-outline-path-2"
+                                      d="M30.78,9H5A1,1,0,0,1,5,7H30.78a1,1,0,0,1,0,2Z"></path>
+                                <rect className="clr-i-outline clr-i-outline-path-3" x="21" y="13" width="2"
+                                      height="15"></rect>
+                                <rect className="clr-i-outline clr-i-outline-path-4" x="13" y="13" width="2"
+                                      height="15"></rect>
+                                <path className="clr-i-outline clr-i-outline-path-5"
+                                      d="M23,5.86H21.1V4H14.9V5.86H13V4a2,2,0,0,1,1.9-2h6.2A2,2,0,0,1,23,4Z"></path>
+                                <rect x="0" y="0" width="36" height="36" fillOpacity="0"/>
+                            </svg>
                         </div>
                     </div>
+                </div>
                 )}
             </Draggable>
         </>

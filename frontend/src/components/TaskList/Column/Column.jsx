@@ -11,9 +11,7 @@ export default function Column({name, tasks=[], deleteTask, userId, onTaskAdded,
     return (
         <>
             <div className={name}>
-                {/*<Modal userId={userId} onModalSubmit={onTaskAdded} name={name}/>*/}
-
-                <div className={'column-header'} onClick={() => handleOpenModal(name)}>
+                <div className={'column-header'} onClick={() => handleOpenModal(name, 'add')}>
                     <h2 className="column-title">{name.toUpperCase()}</h2>
                     <div className={'add-task'}>Click for add</div>
                 </div>
@@ -28,7 +26,8 @@ export default function Column({name, tasks=[], deleteTask, userId, onTaskAdded,
                                 {tasks.map((task, index) => (
                                     <Task key={index} task={task}
                                           index={index} deleteTask={deleteTask}
-                                          name={name} handleOpenModal={handleOpenModal} />
+                                          name={name}
+                                          handleOpenModal={handleOpenModal} />
                                 ))}
                             </div>
                             {provided.placeholder}

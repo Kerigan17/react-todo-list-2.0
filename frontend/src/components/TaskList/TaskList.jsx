@@ -1,18 +1,16 @@
-import React, {useEffect, useState} from "react";
+import React, {createRef, useEffect, useRef, useState} from "react";
 import {baseURL} from "../../config.mjs";
 import axios from "axios";
 import {DragDropContext} from 'react-beautiful-dnd'
 import Column from "./Column/Column";
 import "./TaskList.scss";
-import Modal from "./Modal/Modal";
+import {Modal} from "./Modal/Modal";
 
 export default function TaskList({userId}) {
     const [columns, setColumns] = useState({new: [], progress: [], done: []});
     const [tasks, setTasks] = useState([]);
-    const [modal, setModal] = useState(false);
-    const [columnName, setColumnName] = useState("");
-    const [task_id, setTask_id] = useState("");
-    const [modalData, setModalData] = useState({title: '', description: '', priority: 'low'});
+
+    let modal = createRef();
 
     useEffect(() => {
         axios.get(`${baseURL}/columns/user-columns`, {
@@ -23,7 +21,7 @@ export default function TaskList({userId}) {
             .then(res => {
                 setColumns(res.data)
             })
-            .catch(err =>  console.log(err));
+            .catch(err => console.log(err));
 
         axios.get(`${baseURL}/tasks/all-tasks`, {
             params: {
@@ -33,22 +31,16 @@ export default function TaskList({userId}) {
             .then(res => {
                 setTasks(res.data)
             });
-    },[userId]);
+    }, [userId]);
 
-    function handleOpenModal(name = '', task_id, data) {
-        setModal(true);
-        setColumnName(name);
-        setTask_id(task_id);
-        setModalData(data);
+    function handleOpenModal(column = '', operation, data, taskId = '') {
+        modal.current.open(column, operation, data, taskId);
     }
-    function handleCloseModal() {
-        setModal(false);
-    }
-
-    function selectTasks(key){
+    console.log(tasks);
+    function selectTasks(key) {
         if (columns == undefined) return [];
         return tasks.filter(task => columns[key].includes(task._id))
-            .toSorted((a,b) => columns[key].indexOf(a._id) - columns[key].indexOf(b._id));
+            .toSorted((a, b) => columns[key].indexOf(a._id) - columns[key].indexOf(b._id));
     }
 
     const splitTasks = {
@@ -57,44 +49,55 @@ export default function TaskList({userId}) {
         done: selectTasks('done')
     }
 
-    function addNewTask(task, operation) {
+    function addNewTask(column, task) {
         let newTasks = tasks;
         let newColumns = {...columns};
 
-        if (operation === 'add') {
-            axios.post(`${baseURL}/tasks/add-task`, task)
-                .then(res => {
-                    task._id = res.data.insertedId;
-                    newTasks.push(task);
+        axios.post(`${baseURL}/tasks/add-task`, task)
+            .then(res => {
+                task._id = res.data.insertedId;
+                newTasks.push(task);
 
-                    newColumns[columnName].push(task._id);
+                newColumns[column].push(task._id);
 
-                    axios.patch(`${baseURL}/columns/drop-task`, {
-                        user_id: userId,
-                        columns: newColumns
-                    })
-                        .then(res => {
-                            setTasks(newTasks);
-                            setColumns(newColumns);
-                        });
-
+                axios.patch(`${baseURL}/columns/drop-task`, {
+                    user_id: userId,
+                    columns: newColumns
                 })
-                .catch(error => console.log(error.message));
-        } else {
-            axios.patch(`${baseURL}/tasks/edit-task`, {
-                update_task: task,
-                task_id: task_id
+                    .then(res => {
+                        setTasks(newTasks);
+                        setColumns(newColumns);
+                    });
+
             })
-                .then(res => {
-                    task._id = task_id;
-                    let taskIndex = newTasks.findIndex(item => item._id === task._id);
-                    newTasks.splice(taskIndex, 1, task);
+            .catch(error => console.log(error.message));
+    }
 
-                    setTasks(newTasks);
-                    setColumns(newColumns)
-                });
+    function editTask(task, taskId) {
+        let newTasks = tasks;
+        task._id = taskId;
+        console.log(task._id);
+        axios.patch(`${baseURL}/tasks/edit-task`, {
+            update_task: task
+        })
+            .then(res => {
+                let taskIndex = newTasks.findIndex(item => item._id === task._id);
+                newTasks.splice(taskIndex, 1, task);
+
+                setTasks(newTasks);
+            });
+    }
+
+    function handleModalSubmit(column, operation, newTask, taskId) {
+        newTask.user_id = userId;
+        switch (operation) {
+            case 'add':
+                addNewTask(column, newTask);
+                break;
+            case 'edit':
+                editTask(newTask, taskId);
+                break
         }
-
     }
 
     function deleteTask(task_id, name) {
@@ -116,18 +119,19 @@ export default function TaskList({userId}) {
                 task_id: task_id
             }
         })
-            .then(res => {});
+            .then(res => {
+            });
     }
 
     let onDragEnd = result => {
         const {destination, source, draggableId} = result;
         if (!destination) return;
         const sourceList = Array.from(columns[source.droppableId])
-        let destinationList =  Array.from(columns[destination.droppableId])
+        let destinationList = Array.from(columns[destination.droppableId])
 
         sourceList.splice(source.index, 1);
         if (destination.droppableId === source.droppableId) {
-            if(destination.index === source.index) return;
+            if (destination.index === source.index) return;
             destinationList = sourceList;
         }
 
@@ -135,7 +139,7 @@ export default function TaskList({userId}) {
 
         const updatedColumns = {
             ...columns,
-            [source.droppableId]:sourceList,
+            [source.droppableId]: sourceList,
             [destination.droppableId]: destinationList
         }
         setColumns(updatedColumns)
@@ -164,15 +168,10 @@ export default function TaskList({userId}) {
                     }
                 </div>
             </DragDropContext>
-
-            {modal &&
-                <Modal userId={userId}
-                       onModalSubmit={addNewTask}
-                       handleCloseModal={handleCloseModal}
-                       operation={columnName}
-                       data={modalData}
-                />
-            }
+            <Modal
+                OnSubmit={handleModalSubmit}
+                ref={modal}
+            />
         </>
     )
 }

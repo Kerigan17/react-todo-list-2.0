@@ -33,10 +33,10 @@ router.post("/add-task", async (req, res) => {
 });
 
 router.patch("/edit-task", async (req, res) => {
-    const id = {_id: ObjectId(req.body.task_id)};
-    let collection = await db.collection("tasks"); //req.body.task
+    let collection = await db.collection("tasks");
+    console.log(req.body.update_task)
     let result = await collection.updateOne(
-        id,
+        {_id: ObjectId(req.body.update_task._id)},
         {
             $set: req.body.update_task
         }
